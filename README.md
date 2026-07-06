@@ -57,7 +57,7 @@ Here is how each university Project 4 requirement is fully implemented:
 | **4** | Ansible Scripts | `ansible/deploy-k8s.yml` automates full Kubernetes manifest deployment |
 | **5** | Prometheus/Grafana Monitoring | Ansible playbook `ansible/deploy-monitoring.yml` deploys `kube-prometheus-stack` (Prometheus + Grafana) in `monitoring` namespace |
 | **6** | NGINX Reverse Proxy | `ingress-nginx.yaml` Ingress resource routes traffic to frontend |
-| **7** | Terraform (AWS EC2, RDS, S3, ELB, EKS) | `terraform_main_ec2/`, `eks-terraform/`, `s3-buckets/`, `ecr-terraform/` |
+| **7** | Terraform (AWS EC2, RDS, S3, ELB, EKS) | `terraform_main_ec2/` (EC2/VPC), `eks-terraform/` (EKS + RDS PostgreSQL + ALB Load Balancer), `s3-buckets/` (S3 Bucket), `ecr-terraform/` |
 | **8** | Automated Rollbacks | Jenkinsfiles include `post { failure { ... } }` that runs `kubectl rollout undo` on deployment failure |
 | **9** | Git Repository Setup | Full git configuration, commits, and repo management integrated into pipeline |
 
