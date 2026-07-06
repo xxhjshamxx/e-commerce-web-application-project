@@ -1,0 +1,46 @@
+---
+- name: Deploy Prometheus & Grafana Monitoring Stack
+  hosts: all
+  become: yes
+  gather_facts: yes
+
+  tasks:
+    - name: Check if kubectl is available
+      ansible.builtin.command: kubectl version --client
+      register: kubectl_check
+      ignore_errors: yes
+      changed_when: false
+
+    - name: Fail if kubectl is not installed
+      ansible.builtin.fail:
+        msg: "kubectl is not installed on target host"
+      when: kubectl_check.rc != 0
+
+    - name: Check if Helm is installed
+      ansible.builtin.command: helm version --short
+      register: helm_check
+      ignore_errors: yes
+      changed_when: false
+
+    - name: Fail if Helm is not installed
+      ansible.builtin.fail:
+        msg: "Helm is not installed on target host"
+      when: helm_check.rc != 0
+
+    - name: Create monitoring namespace
+      ansible.builtin.command: kubectl apply -f ../kubernetes-files/monitoring-namespace.yaml
+      register: namespace_output
+      changed_when: "'created' in namespace_output.stdout"
+
+    - name: Add Prometheus Community Helm repository
+      kubernetes.core.helm_repository:
+        name: prometheus-community
+        repo_url: https://prometheus-community.github.io/helm-charts
+        state: present
+
+    - name: Install kube-prometheus-stack
+      kubernetes.core.helm:
+        name: prometheus
+        chart_ref: prometheus-community/kube-prometheus-stack
+        namespace: monitoring
+        state: present

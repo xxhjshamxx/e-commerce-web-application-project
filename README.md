@@ -55,7 +55,7 @@ Here is how each university Project 4 requirement is fully implemented:
 | **2** | CI/CD Pipelines (Jenkins) | Jenkins pipeline files for all services in `jenkinsfiles/` directory |
 | **3** | Kubernetes Deployment with HPA | Kubernetes manifests in `kubernetes-files/`, plus `hpa-frontend.yaml` auto-scales frontend 2→5 replicas at 70% CPU |
 | **4** | Ansible Scripts | `ansible/deploy-k8s.yml` automates full Kubernetes manifest deployment |
-| **5** | Prometheus/Grafana Monitoring | Installation script included in Terraform EC2 init (install-tools.sh) |
+| **5** | Prometheus/Grafana Monitoring | Ansible playbook `ansible/deploy-monitoring.yml` deploys `kube-prometheus-stack` (Prometheus + Grafana) in `monitoring` namespace |
 | **6** | NGINX Reverse Proxy | `ingress-nginx.yaml` Ingress resource routes traffic to frontend |
 | **7** | Terraform (AWS EC2, RDS, S3, ELB, EKS) | `terraform_main_ec2/`, `eks-terraform/`, `s3-buckets/`, `ecr-terraform/` |
 | **8** | Automated Rollbacks | Jenkinsfiles include `post { failure { ... } }` that runs `kubectl rollout undo` on deployment failure |
@@ -102,13 +102,39 @@ ansible-playbook -i inventory.ini deploy-k8s.yml
 
 ---
 
-### Step 3: Verify Deployment
+### Step 2.5: Deploy Prometheus & Grafana Monitoring Stack
+Deploy the observability stack:
+```bash
+ansible-playbook -i inventory.ini deploy-monitoring.yml
+```
+
+---
+
+### Step 3: Verify Deployment & Access Grafana Dashboard
 Check all resources are running:
 ```bash
+kubectl get all -n monitoring
 kubectl get all
 kubectl get ingress
 kubectl get hpa
 ```
+
+**Access Grafana**: Port-forward the Grafana service to view dashboards:
+```bash
+kubectl port-forward svc/prometheus-grafana 3000:80 -n monitoring
+```
+
+Then navigate to http://localhost:3000 in your browser (default credentials are admin/prom-operator or check the Grafana secret for the actual password).
+
+---
+
+### Step 4: (Optional) View Prometheus Targets
+Port-forward Prometheus:
+```bash
+kubectl port-forward svc/prometheus-kube-prometheus-prometheus 9090:9090 -n monitoring
+```
+
+Navigate to http://localhost:9090 to view Prometheus UI.
 
 ---
 
