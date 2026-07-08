@@ -6,7 +6,7 @@ provider "aws" {
 # IAM Role for EKS Cluster
 # ----------------------------
 resource "aws_iam_role" "master" {
-  name = "ramzy-eks-master1"
+  name = "eks-master1"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
@@ -39,7 +39,7 @@ resource "aws_iam_role_policy_attachment" "AmazonEKSVPCResourceController" {
 # IAM Role for Worker Nodes
 # ----------------------------
 resource "aws_iam_role" "worker" {
-  name = "ramzy-eks-worker1"
+  name = "eks-worker1"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
@@ -54,7 +54,7 @@ resource "aws_iam_role" "worker" {
 }
 
 resource "aws_iam_policy" "autoscaler" {
-  name = "ramzy-eks-autoscaler-policy1"
+  name = "eks-autoscaler-policy1"
   policy = jsonencode({
     Version = "2012-10-17",
     Statement = [{
@@ -105,7 +105,7 @@ resource "aws_iam_role_policy_attachment" "autoscaler" {
 
 resource "aws_iam_instance_profile" "worker" {
   depends_on = [aws_iam_role.worker]
-  name       = "ramzy-eks-worker-profile1"
+  name       = "yaswanth-eks-worker-profile1"
   role       = aws_iam_role.worker.name
 }
 
@@ -155,9 +155,8 @@ resource "aws_eks_cluster" "eks" {
   }
 
   tags = {
-    Name        = "ramzy-eks-cluster"
-    Owner       = "Ramzy_Ahmed"
-    Environment = "dev"
+    Name        = "eks-cluster"
+    Environment = "prod"
     Terraform   = "true"
   }
 
@@ -178,21 +177,20 @@ resource "aws_eks_node_group" "node-grp" {
   node_role_arn   = aws_iam_role.worker.arn
   subnet_ids      = [data.aws_subnet.subnet-1.id, data.aws_subnet.subnet-2.id]
   capacity_type   = "ON_DEMAND"
-  disk_size        = 20
-  instance_types  = ["t2.large"]
+  disk_size       = 20
+  instance_types  = ["t3.small"]
 
   labels = {
-    env = "dev"
+    env = "prod"
   }
 
   tags = {
-    Name  = "project-eks-node-group"
-    Owner = "Ramzy_Ahmed"
+    Name = "project-eks-node-group"
   }
 
   scaling_config {
     desired_size = 3
-    max_size     = 10
+    max_size     = 7
     min_size     = 2
   }
 
