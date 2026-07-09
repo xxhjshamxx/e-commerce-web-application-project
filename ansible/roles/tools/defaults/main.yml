@@ -1,9 +1,0 @@
----
-tools_extra_packages: []
-tools_install_kubectl: false
-tools_install_terraform: false
-tools_install_awscli: false
-tools_install_helm: false
-tools_kubectl_version: "v1.31.0"
-tools_terraform_version: "1.9.5"
-tools_helm_version: "v3.15.4"

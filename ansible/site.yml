@@ -1,31 +1,18 @@
 ---
-# =====================================================================
-# MASTER PLAYBOOK
-# Runs everything end to end, in a safe order:
-#   1) ping/network check   (tag: ping)
-#   2) install Docker       (tag: docker)
-#   3) install extra tools  (tag: tools)
-#   4) cleanup              (tag: cleanup)
-#
-# Run everything:
-#   ansible-playbook site.yml
-#
-# Run only one part:
-#   ansible-playbook site.yml --tags docker
-#   ansible-playbook site.yml --tags ping
-#
-# Run everything except cleanup (recommended default for daily use):
-#   ansible-playbook site.yml --skip-tags cleanup
-# =====================================================================
+- name: server setup
+  hosts: ubuntu_vm
+  become: true
+  roles:
+    - common
 
-- name: Import connectivity/network check
-  ansible.builtin.import_playbook: playbooks/ping.yml
+- name: Setup Nginx 
+  hosts: ubuntu_vm
+  become: true
+  roles:
+    - nginx
 
-- name: Import Docker installation
-  ansible.builtin.import_playbook: playbooks/install_docker.yml
-
-- name: Import extra tools installation
-  ansible.builtin.import_playbook: playbooks/install_tools.yml
-
-- name: Import cleanup tasks
-  ansible.builtin.import_playbook: playbooks/cleanup.yml
+- name: Setup Apache 
+  hosts: ubuntu_vm
+  become: true
+  roles:
+    - apache

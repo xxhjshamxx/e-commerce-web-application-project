@@ -1,0 +1,7 @@
+---
+- name: Run common role only
+  hosts: ubuntu_vm
+  become: true
+
+  roles:
+    - common

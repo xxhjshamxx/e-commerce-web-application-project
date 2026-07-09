@@ -1,0 +1,7 @@
+---
+- name: Run nginx role only
+  hosts: ubuntu_vm
+  become: true
+
+  roles:
+    - nginx

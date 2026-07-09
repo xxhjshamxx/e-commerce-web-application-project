@@ -7,7 +7,7 @@ volumes:
 
 services:
   # ----------------------------------------------------------------
-  # In-memory store used by cartservice (was an emptyDir volume in K8s)
+  # In-memory store used by cartservice 
   # ----------------------------------------------------------------
   redis-cart:
     image: redis:alpine

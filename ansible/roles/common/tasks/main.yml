@@ -1,51 +1,50 @@
 ---
-# =====================================================================
-# ROLE: common
-# Base OS preparation that every other role depends on.
-# =====================================================================
-
-- name: Gather minimal facts (in case play disabled fact gathering)
-  ansible.builtin.setup:
-    gather_subset:
-      - "!all"
-      - "min"
-  when: ansible_facts['os_family'] is not defined
-  tags: [common, always]
-
-- name: Update apt cache (Debian family)
+- name: Update apt cache and upgrade all packages
   ansible.builtin.apt:
     update_cache: true
+    upgrade: dist
     cache_valid_time: 3600
-  when: ansible_facts['os_family'] == "Debian"
-  changed_when: false
-  tags: [common]
-
-- name: Update dnf cache (RedHat family)
-  ansible.builtin.dnf:
-    update_cache: true
-  when: ansible_facts['os_family'] == "RedHat"
-  changed_when: false
-  tags: [common]
 
 - name: Install base packages
-  ansible.builtin.package:
-    name: "{{ common_base_packages }}"
+  ansible.builtin.apt:
+    name: "{{ base_packages }}"
     state: present
-  register: common_pkg_install
-  tags: [common]
 
-- name: Ensure a demo working directory exists (used by other roles/tests)
-  ansible.builtin.file:
-    path: /tmp/ansible_demo
-    state: directory
-    mode: "0755"
-  tags: [common]
+- name: Create new user with sudo privileges
+  ansible.builtin.user:
+    name: "{{ new_user }}"
+    groups: sudo
+    shell: /bin/bash
+    create_home: true
 
-- name: Show basic facts about the managed host
-  ansible.builtin.debug:
-    msg:
-      - "Hostname     : {{ ansible_facts['hostname'] | default('unknown') }}"
-      - "OS family    : {{ ansible_facts['os_family'] | default('unknown') }}"
-      - "Distribution : {{ ansible_facts['distribution'] | default('unknown') }} {{ ansible_facts['distribution_version'] | default('') }}"
-      - "Architecture : {{ ansible_facts['architecture'] | default('unknown') }}"
-  tags: [common]
+- name: Add SSH public key for the new user
+  ansible.posix.authorized_key:
+    user: "{{ new_user }}"
+    key: "{{ ssh_public_key }}"
+    state: present
+
+- name: Disable root login via SSH
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^#?PermitRootLogin'
+    line: 'PermitRootLogin no'
+  notify: Restart sshd
+
+- name: Disable password authentication via SSH
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^#?PasswordAuthentication'
+    line: 'PasswordAuthentication no'
+  notify: Restart sshd
+
+
+- name: Allow SSH port through firewall
+  community.general.ufw:
+    rule: allow
+    port: "{{ ssh_port }}"
+    proto: tcp
+
+- name: Enable firewall
+  community.general.ufw:
+    state: enabled
+    policy: deny
