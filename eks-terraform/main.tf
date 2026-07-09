@@ -189,7 +189,7 @@ resource "aws_eks_node_group" "node-grp" {
   }
 
   scaling_config {
-    desired_size = 4
+    desired_size = 5
     max_size     = 7
     min_size     = 2
   }
