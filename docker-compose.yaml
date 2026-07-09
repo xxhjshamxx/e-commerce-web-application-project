@@ -176,9 +176,6 @@ services:
     restart: unless-stopped
     networks:
       - boutique-net
-    volumes:
-      - ./src/frontend/templates:/templates
-      - ./src/frontend/static:/static
     ports:
       - "8081:8080"
     environment:
