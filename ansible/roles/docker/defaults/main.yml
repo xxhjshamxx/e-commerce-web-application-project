@@ -1,5 +1,0 @@
----
-docker_packages: []
-docker_users: []
-docker_old_packages_debian: []
-docker_old_packages_redhat: []

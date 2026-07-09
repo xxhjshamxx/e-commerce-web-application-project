@@ -1,8 +1,0 @@
----
-- name: Connectivity and network check
-  hosts: all_targets
-  gather_facts: true
-  become: false
-  tags: [ping]
-  roles:
-    - network_check
