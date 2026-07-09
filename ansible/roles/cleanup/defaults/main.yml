@@ -1,0 +1,5 @@
+---
+cleanup_paths: []
+cleanup_packages: []
+cleanup_docker_prune: false
+cleanup_apt_autoremove: true

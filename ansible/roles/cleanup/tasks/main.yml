@@ -1,0 +1,69 @@
+---
+# =====================================================================
+# ROLE: cleanup
+#   1) Remove exact files/directories
+#   2) Remove files matching a glob pattern (via find + loop)
+#   3) Optionally remove packages
+#   4) Optionally prune Docker (off by default - destructive)
+#   5) Optionally run apt autoremove/autoclean (on by default - safe)
+# =====================================================================
+
+- name: Remove exact files/directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop: "{{ cleanup_paths }}"
+  when: cleanup_paths is defined and cleanup_paths | length > 0
+  tags: [cleanup]
+
+- name: Find files matching cleanup patterns
+  ansible.builtin.find:
+    paths: "{{ cleanup_find_root }}"
+    patterns: "{{ cleanup_find_patterns }}"
+    age: "{{ cleanup_find_age_days }}d"
+    recurse: false
+  register: cleanup_found_files
+  when: cleanup_find_patterns is defined and cleanup_find_patterns | length > 0
+  failed_when: false
+  tags: [cleanup]
+
+- name: Delete files matched by find
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: absent
+  loop: "{{ cleanup_found_files.files | default([]) }}"
+  loop_control:
+    label: "{{ item.path }}"
+  when: cleanup_found_files is defined and cleanup_found_files.files is defined
+  tags: [cleanup]
+
+- name: Remove specified packages
+  ansible.builtin.package:
+    name: "{{ cleanup_packages }}"
+    state: absent
+  when: cleanup_packages is defined and cleanup_packages | length > 0
+  tags: [cleanup]
+
+- name: Prune unused Docker data (images, containers, networks, volumes)
+  ansible.builtin.command: docker system prune -af --volumes
+  when: cleanup_docker_prune | bool
+  register: cleanup_docker_prune_result
+  changed_when: "'Total reclaimed space: 0B' not in cleanup_docker_prune_result.stdout"
+  tags: [cleanup, docker]
+
+- name: Autoremove/autoclean unused packages (Debian family)
+  ansible.builtin.apt:
+    autoremove: true
+    autoclean: true
+  when:
+    - cleanup_apt_autoremove | bool
+    - ansible_facts['os_family'] == "Debian"
+  tags: [cleanup]
+
+- name: Autoremove unused packages (RedHat family)
+  ansible.builtin.dnf:
+    autoremove: true
+  when:
+    - cleanup_apt_autoremove | bool
+    - ansible_facts['os_family'] == "RedHat"
+  tags: [cleanup]

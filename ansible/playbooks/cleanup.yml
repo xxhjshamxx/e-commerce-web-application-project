@@ -1,0 +1,8 @@
+---
+- name: Clean up files, packages and unused Docker data
+  hosts: all_targets
+  gather_facts: true
+  become: true
+  tags: [cleanup]
+  roles:
+    - cleanup

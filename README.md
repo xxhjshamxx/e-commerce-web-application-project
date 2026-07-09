@@ -1,8 +1,8 @@
 # Automated E-Commerce Deployment Platform - Project 4
 
 ## Project Engineering Team
-- **Ramzy Ahmed Ramzy** - Lead Architect
-- **Hesham Abdelnasser Mohamed**
+- **Hisham Abd ElNasser Mohamed** - Lead Architect
+- **Ramzy Ahmed Ramzy**
 - **Ibrahim Alaa Abo Elnasr**
 - **Ahmed Gamal Abdelazeem**
 - **Islam Gamal Mahmoud Abdelgawad**
