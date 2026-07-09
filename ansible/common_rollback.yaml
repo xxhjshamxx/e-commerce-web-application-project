@@ -1,0 +1,7 @@
+---
+- name: Run common_rollback role only
+  hosts: ubuntu_vm
+  become: true
+
+  roles:
+    - common_rollback

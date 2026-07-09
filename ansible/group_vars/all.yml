@@ -1,0 +1,17 @@
+---
+# اليوزر الجديد اللي هيتعمل على السيرفرات
+new_user: deployer
+
+# TODO: غيّر ده بالـ public key بتاعك (محتوى ملف id_rsa.pub)
+ssh_public_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGTKafHVYG9Wy4TLzsBSZzPgANnCviNYKmSU5sjqld4t eltaweelh3@gmail.com"
+
+# البورتات اللي هتتفتح في الفايروول
+ssh_port: 22
+
+# الباكدجات الأساسية اللي هتتثبت على كل السيرفرات
+base_packages:
+  - git
+  - curl
+  - vim
+  - htop
+  - unzip

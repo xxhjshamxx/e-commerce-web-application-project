@@ -1,0 +1,7 @@
+---
+- name: Run apache role only
+  hosts: ubuntu_vm
+  become: true
+
+  roles:
+    - apache

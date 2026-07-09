@@ -1,0 +1,18 @@
+---
+- name: server setup
+  hosts: ubuntu_vm
+  become: true
+  roles:
+    - common
+
+- name: Setup Nginx 
+  hosts: ubuntu_vm
+  become: true
+  roles:
+    - nginx
+
+- name: Setup Apache 
+  hosts: ubuntu_vm
+  become: true
+  roles:
+    - apache

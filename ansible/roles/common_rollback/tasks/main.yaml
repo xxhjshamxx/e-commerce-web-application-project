@@ -1,0 +1,38 @@
+---
+- name: Remove SSH public key
+  ansible.posix.authorized_key:
+    user: "{{ new_user }}"
+    key: "{{ ssh_public_key }}"
+    state: absent
+  ignore_errors: true
+
+- name: Remove created user
+  ansible.builtin.user:
+    name: "{{ new_user }}"
+    state: absent
+    remove: true
+
+- name: Remove base packages
+  ansible.builtin.apt:
+    name: "{{ base_packages }}"
+    state: absent
+    autoremove: true
+    purge: true
+
+- name: Enable root login
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^#?PermitRootLogin'
+    line: 'PermitRootLogin yes'
+  notify: Restart sshd
+
+- name: Enable password authentication
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^#?PasswordAuthentication'
+    line: 'PasswordAuthentication yes'
+  notify: Restart sshd
+
+- name: Disable UFW firewall
+  community.general.ufw:
+    state: disabled
