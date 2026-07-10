@@ -7,7 +7,7 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: adservice
-  minReplicas: 2
+  minReplicas: 1
   maxReplicas: 3
   metrics:
   - type: Resource
@@ -31,7 +31,7 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: currencyservice
-  minReplicas: 2
+  minReplicas: 1
   maxReplicas: 3
   metrics:
   - type: Resource
@@ -55,7 +55,7 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: emailservice
-  minReplicas: 2
+  minReplicas: 1
   maxReplicas: 3
   metrics:
   - type: Resource
@@ -79,7 +79,7 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: paymentservice
-  minReplicas: 2
+  minReplicas: 1
   maxReplicas: 3
   metrics:
   - type: Resource
@@ -103,7 +103,7 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: recommendationservice
-  minReplicas: 2
+  minReplicas: 1
   maxReplicas: 3
   metrics:
   - type: Resource
@@ -127,7 +127,7 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: shippingservice
-  minReplicas: 2
+  minReplicas: 1
   maxReplicas: 3
   metrics:
   - type: Resource
