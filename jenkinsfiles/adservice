@@ -67,3 +67,22 @@ pipeline {
         }
     }
 }
+/*
+ * =============================================================================
+ * Jenkins CI/CD Declarative Pipeline
+ * =============================================================================
+ * 📝 Project Name: e-commerce-web-application-project (Microservice: adservice)
+ * 🚀 Description : This pipeline automates the CI/CD lifecycle for the 'adservice' 
+ * microservice. It handles workspace cleaning, fetching the latest 
+ * code, building the Docker image, pushing it to Amazon ECR, 
+ * and updating the Kubernetes deployment file via a GitOps workflow.
+ *
+ * 🛠️ Pipeline Stages:
+ * 1. Cleaning Workspace    : Cleans the current workspace to remove any old build artifacts.
+ * 2. Checkout from Git     : Clones the latest source code from the 'main' branch.
+ * 3. Docker Image Build    : Prunes cached data/containers and builds a fresh Docker image.
+ * 4. ECR Image Pushing     : Authenticates with AWS and pushes the tagged image to Amazon ECR.
+ * 5. Update Deployment file: Updates the image tag inside the Kubernetes YAML file using 'sed'
+ * and pushes the changes back to GitHub automatically.
+ * =============================================================================
+ */
